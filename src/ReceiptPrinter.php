@@ -11,6 +11,7 @@ use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use \ArPHP\I18N\Arabic;
 
 class ReceiptPrinter
 {
@@ -53,6 +54,12 @@ class ReceiptPrinter
             $profile = CapabilityProfile::load("default");
             // Connect to printer
             $this->printer = new Printer($connector, $profile);
+            $fontPath = public_path('Amiri-Regular.ttf');
+            $fontSize = 28;
+            $buffer->setFont($fontPath);
+            $buffer->setFontSize($fontSize);
+            $this->printer->setPrintBuffer($buffer);
+
         } else {
             throw new Exception('Invalid printer connector type. Accepted values are: cups');
         }
