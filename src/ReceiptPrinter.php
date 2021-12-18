@@ -11,6 +11,7 @@ use Mike42\Escpos\PrintConnectors\CupsPrintConnector;
 use Mike42\Escpos\PrintConnectors\WindowsPrintConnector;
 use Mike42\Escpos\PrintConnectors\NetworkPrintConnector;
 use Mike42\Escpos\PrintConnectors\FilePrintConnector;
+use Mike42\Escpos\PrintBuffers\ImagePrintBuffer;
 use \ArPHP\I18N\Arabic;
 
 class ReceiptPrinter
@@ -56,6 +57,7 @@ class ReceiptPrinter
             $this->printer = new Printer($connector, $profile);
             $fontPath = public_path('Amiri-Regular.ttf');
             $fontSize = 28;
+            $buffer = new ImagePrintBuffer();
             $buffer->setFont($fontPath);
             $buffer->setFontSize($fontSize);
             $this->printer->setPrintBuffer($buffer);
