@@ -242,6 +242,7 @@ class ReceiptPrinter
             $this->printer->text("{$this->store->getName()}\n");
             $this->printer->selectPrintMode();
             $this->printer->text("{$this->store->getAddress()}\n");
+            $this->printer->setJustification(Printer::JUSTIFY_RIGHT);
             $this->printer->text($header . "\n");
             $this->printer->feed();
             // Print receipt title
