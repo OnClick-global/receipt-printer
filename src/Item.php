@@ -53,6 +53,6 @@ class Item
         $print_priceqty = str_pad($item_price . ' x ' . $this->qty, $left_cols);
         $print_subtotal = str_pad($item_subtotal, $right_cols, ' ', STR_PAD_LEFT);
 
-        return "$print_name\n$print_priceqty$print_subtotal\n";
+        return "$print_name$print_priceqty$print_subtotal\n";
     }
 }
