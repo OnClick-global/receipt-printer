@@ -222,8 +222,8 @@ class ReceiptPrinter
             $tax = $this->getPrintableSummary('Tax', $this->tax);
             $total = $this->getPrintableSummary('TOTAL', $this->grandtotal, true);
             $header = $this->getPrintableHeader(
-                'TID: ' . $this->transaction_id,
-                'MID: ' . $this->store->getMID()
+                'رقم الهاتف: ' . $this->transaction_id,
+                'رقم الطلب: ' . $this->store->getMID()
             );
             $footer = "Thank you for shopping!\n";
             // Init printer settings
@@ -270,8 +270,6 @@ class ReceiptPrinter
             $this->printer->text($total);
             $this->printer->feed();
             $this->printer->selectPrintMode();
-            // Print qr code
-            $this->printQRcode();
             // Print receipt footer
             $this->printer->feed();
             $this->printer->setJustification(Printer::JUSTIFY_CENTER);
