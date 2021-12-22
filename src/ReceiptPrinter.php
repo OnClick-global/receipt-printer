@@ -217,31 +217,73 @@ class ReceiptPrinter
 
     public function printReceipt($with_items = true) {
         if ($this->printer) {
-$this->printer -> setEmphasis(true);
-$this->printer -> text("Left margin\n");
-$this->printer -> setEmphasis(false);
-$this->printer -> text("Default left\n");
-foreach(array(1, 2, 4, 8, 16, 32, 64, 128, 256, 512) as $margin) {
-    $this->printer -> setPrintLeftMargin($margin);
-    $this->printer -> text("left margin $margin\n");
-}
-/* Reset left */
-$this->printer -> setPrintLeftMargin(0);
-
-/* Stuff around with page width */
-$this->printer -> setEmphasis(true);
-$this->printer -> text("Page width\n");
-$this->printer -> setEmphasis(false);
-$this->printer -> setJustification(Printer::JUSTIFY_RIGHT);
-$this->printer -> text("Default width\n");
-foreach(array(512, 256, 128, 64) as $width) {
-    $this->printer -> setPrintWidth($width);
-    $this->printer -> text("page width $width\n");
-}
-
-/* Printer shutdown */
-$this->printer -> cut();
-$this->printer -> close();
+            // Get total, subtotal, etc
+            $subtotal = $this->getPrintableSummary('Subtotal', $this->subtotal);
+            $tax = $this->getPrintableSummary('Tax', $this->tax);
+            $total = $this->getPrintableSummary('TOTAL', $this->grandtotal, true);
+            $header = $this->getPrintableHeader(
+                'رقم الهاتف: ' . $this->transaction_id."\n",
+                'رقم الطلب: ' . $this->store->getMID()
+            );
+            $footer = "Thank you for shopping!\n";
+            // Init printer settings
+            $this->printer->initialize();
+            $this->printer->selectPrintMode();
+            // Set margins
+            $this->printer->setPrintLeftMargin(1);
+            // Print receipt headers
+            $this->printer->setJustification(Printer::JUSTIFY_CENTER);
+            // Image print mode
+            $image_print_mode = 0; // 0 = auto; 1 = mode 1; 2 = mode 2
+            // Print logo
+            $this->printLogo($image_print_mode);
+            $this->printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+            $this->printer->feed(2);
+            $this->printer->text("{$this->store->getName()}\n");
+            $this->printer->selectPrintMode();
+            $this->printer->text("{$this->store->getAddress()}\n");
+            $this->printer->setJustification(Printer::JUSTIFY_RIGHT);
+            $this->printer->text($header . "\n");
+            $this->printer->feed();
+            // Print receipt title
+            $this->printer->setEmphasis(true);
+            $this->printer->text("RECEIPT\n");
+            $this->printer->setEmphasis(false);
+            $this->printer->feed();
+            // Print items
+            if ($with_items) {
+                $this->printer->setJustification(Printer::JUSTIFY_LEFT);
+                foreach ($this->items as $item) {
+                    $this->printer->text($item);
+                }
+                $this->printer->feed();
+            }
+            // Print subtotal
+            $this->printer->setEmphasis(true);
+            $this->printer->text($subtotal);
+            $this->printer->setEmphasis(false);
+            $this->printer->feed();
+            // Print tax
+            $this->printer->text($tax);
+            $this->printer->feed(2);
+            // Print grand total
+            $this->printer->selectPrintMode(Printer::MODE_DOUBLE_WIDTH);
+            $this->printer->text($total);
+            $this->printer->feed();
+            $this->printer->selectPrintMode();
+            // Print receipt footer
+            $this->printer->feed();
+            $this->printer->setJustification(Printer::JUSTIFY_CENTER);
+            $this->printer->text($footer);
+            $this->printer->feed();
+            // Print receipt date
+            $this->printer->text(date('j F Y H:i:s'));
+            $this->printer->feed(2);
+            // Cut the receipt
+            $this->printer->cut();
+            // Open drawer
+            //$this->printer->openDrawer();
+            $this->printer->close();
         } else {
             throw new Exception('Printer has not been initialized.');
         }
