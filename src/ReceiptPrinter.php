@@ -222,7 +222,7 @@ class ReceiptPrinter
             $tax = $this->getPrintableSummary('Tax', $this->tax);
             $total = $this->getPrintableSummary('TOTAL', $this->grandtotal, true);
             $header = $this->getPrintableHeader(
-                'رقم الهاتف: ' . $this->transaction_id,
+                'رقم الهاتف: ' . $this->transaction_id."\n",
                 'رقم الطلب: ' . $this->store->getMID()
             );
             $footer = "Thank you for shopping!\n";
